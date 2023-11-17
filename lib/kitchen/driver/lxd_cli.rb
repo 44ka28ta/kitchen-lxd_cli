@@ -404,7 +404,7 @@ module Kitchen
         def wait_for_ip_address
           info("Waiting for network to become ready")
           begin
-            lxc_info = `lxc info #{@@instance_name}`.match(/eth0:\tinet\t(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/)
+            lxc_info = `lxc info #{@@instance_name}`.match(/eth0:.*IP addresses:\s*inet:\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\/\d{1,2}\s\(global\)/m)
             debug("Still waiting for IP Address...")
             lxc_ip = lxc_info.captures[0].to_s if lxc_info && lxc_info.captures
             break if lxc_ip && lxc_ip.length > 7
