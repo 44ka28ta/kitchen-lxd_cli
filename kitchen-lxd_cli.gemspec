@@ -6,11 +6,11 @@ require 'kitchen/driver/lxd_cli_version'
 Gem::Specification.new do |spec|
   spec.name          = 'kitchen-lxd_cli'
   spec.version       = Kitchen::Driver::LXD_CLI_VERSION
-  spec.authors       = ['Braden Wright']
-  spec.email         = ['braden.m.wright@gmail.com']
+  spec.authors       = ['Yoshikazu Hata']
+  spec.email         = ['44ka28ta@gmail.com']
   spec.description   = %q{A Test Kitchen Driver for LXD}
   spec.summary       = spec.description
-  spec.homepage      = 'https://github.com/bradenwright/kitchen-lxd_cli'
+  spec.homepage      = 'https://github.com/44ka28ta/kitchen-lxd_cli'
   spec.license       = 'Apache 2.0'
 
   spec.files         = `git ls-files`.split($/)
@@ -26,4 +26,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'cane'
   spec.add_development_dependency 'tailor'
   spec.add_development_dependency 'countloc'
+  spec.metadata["allowed_push_host"] = "https://rubygems.pkg.github.com/44ka28ta"
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = spec.homepage
+  spec.metadata["changelog_uri"] = spec.homepage
 end
