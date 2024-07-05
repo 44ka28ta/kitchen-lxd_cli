@@ -290,13 +290,17 @@ module Kitchen
             case config[:ip_gateway]
             when "auto", ""
               dns_servers = "nameserver 8.8.8.8\nnameserver 8.8.4.4"
-              dns_servers = "nameserver 8.8.8.8\nnameserver 8.8.4.4"
             else
               dns_servers = "nameserver #{config[:ip_gateway]}\nnameserver 8.8.8.8\nnameserver 8.8.4.4"
             end if config[:ipv4] && dns_servers.length == 0
 
             if dns_servers.length > 0
               if system "lxc exec #{@@instance_name} -- test -e /etc/redhat-release"
+                wait_for_path("/etc/resolv.conf")
+                debug("Setting up the following dns servers via /etc/resolv.conf:")
+                debug(dns_servers.gsub("\n", ' '))
+                p.puts(" echo \"#{dns_servers.chomp}\" > /etc/resolv.conf")
+              elsif system "lxc exec #{@@instance_name} -- test -e /etc/debian_version"
                 wait_for_path("/etc/resolv.conf")
                 debug("Setting up the following dns servers via /etc/resolv.conf:")
                 debug(dns_servers.gsub("\n", ' '))
@@ -319,9 +323,9 @@ module Kitchen
             args_host ||= "#{instance.name}"
             wait_for_path("/etc/hosts")
             p.puts("if grep -iq '127.0.1.1' /etc/hosts; then")
-            p.puts("sed -i 's/^127.0.1.1.*$/127.0.1.1\t#{args_host}/' /etc/hosts")
+            p.puts("sed -i 's/^127.0.1.1.*$/127.0.1.1\t#{args_host}\t#{@@instance_name}/' /etc/hosts")
             p.puts("else echo '#***** Setup by Kitchen-LxdCli driver *****#' >> /etc/hosts")
-            p.puts("echo -e '127.0.1.1\t#{args_host}' >> /etc/hosts; fi")
+            p.puts("echo -e '127.0.1.1\t#{args_host}\t#{@@instance_name}' >> /etc/hosts; fi")
             p.puts("exit")
           end
         end
