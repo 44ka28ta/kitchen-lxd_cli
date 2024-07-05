@@ -302,10 +302,20 @@ module Kitchen
                 debug(dns_servers.gsub("\n", ' '))
                 p.puts(" echo \"#{dns_servers.chomp}\" > /etc/resolv.conf")
               elsif system "lxc exec #{@@instance_name} -- test -e /etc/debian_version"
-                wait_for_path("/etc/resolv.conf")
-                debug("Setting up the following dns servers via /etc/resolv.conf:")
-                debug(dns_servers.gsub("\n", ' '))
-                p.puts(" echo \"#{dns_servers.chomp}\" > /etc/resolv.conf")
+                if system "lxc exec #{@@instance_name} -- /bin/bash -c 'test 1 -eq `echo $(head -n1 /etc/debian_version)\"<12\" | bc -l`'"
+                  wait_for_path("/etc/resolv.conf")
+                  debug("Setting up the following dns servers via /etc/resolv.conf:")
+                  debug(dns_servers.gsub("\n", ' '))
+                  p.puts(" echo \"#{dns_servers.chomp}\" > /etc/resolv.conf")
+                else
+                  wait_for_path("/etc/systemd/resolved.conf")
+                  debug("Setting up the following dns servers via /etc/systemd/resolved.conf:")
+                  resolv_dns_servers = ""
+                  config[:dns_servers].each do |dns_server|
+                    resolv_dns_servers += "#{dns_server} "
+                  end if config[:dns_servers]
+                  p.puts(" echo \"DNS=#{resolv_dns_servers.chomp}\" >> /etc/systemd/resolved.conf")
+                end
               else
                 wait_for_path("/etc/resolvconf/resolv.conf.d/base")
                 debug("Setting up the following dns servers via /etc/resolvconf/resolv.conf.d/base:")
