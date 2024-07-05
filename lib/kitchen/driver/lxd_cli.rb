@@ -73,6 +73,7 @@ module Kitchen
           p.puts("if [ ! -d '#{config[:verifier_path]}' ]; then mkdir -p #{config[:verifier_path]}; fi")
           p.puts("if [ ! -L '/tmp/verifier' ]; then ln -s #{config[:verifier_path]} /tmp/verifier; fi")
         end if config[:verifier_path] && config[:verifier_path].length > 0
+        run_lxc_command("exec #{@@instance_name} -- ln -s /opt/chef /opt/cinc")
       end
 
       def destroy(state)
