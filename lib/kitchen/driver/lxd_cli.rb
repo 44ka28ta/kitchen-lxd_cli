@@ -360,7 +360,7 @@ module Kitchen
               home_path = '/'
             end
             authorized_keys_path = "#{home_path}#{config[:username]}/.ssh/authorized_keys"
-            `lxc file push #{config[:public_key_path]} #{@@instance_name}#{authorized_keys_path} 2> /dev/null && lxc exec #{@@instance_name} -- chown #{config[:username]}:#{config[:username]} #{authorized_keys_path}`
+            `lxc file push #{config[:public_key_path]} #{@@instance_name}#{authorized_keys_path}.tmp 2> /dev/null && lxc exec #{@@instance_name} -- install -m 0600 -o #{config[:username]} -g #{config[:username]} #{authorized_keys_path}.tmp #{authorized_keys_path} && lxc exec #{@@instance_name} -- rm #{authorized_keys_path}.tmp`
             break if $?.to_i == 0
             sleep 0.3
           end while true
